@@ -52,6 +52,7 @@ class ContactUsAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         js = (
             '/static/js/addModelButtons.js',
             '/static/js/persistInputs.js',
+            '/static/js/json-editor.js',
         )
 
 
@@ -72,7 +73,7 @@ class TagAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 class SitePageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields = ['name', 'user', 'id']
     readonly_fields = ['id', 'time', 'updated_at']
-    autocomplete_fields = ['tags']
+    autocomplete_fields = ['tags', "user"]
 
     class Meta:
         model = SitePage
@@ -80,10 +81,20 @@ class SitePageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['shortTitle', 'user',
                     'is_approved', 'slug', 'created', 'updated']
 
+    list_filter = (
+        "isa",
+        "is_published",
+        "is_approved",
+        ActiveUser,
+    )
+
     ordering = ['isa', 'is_approved', 'is_published', '-updated_at']
 
     class Media:
         js = (
             '/static/js/addModelButtons.js',
             '/static/js/persistInputs.js',
+            '/static/js/html-editor.js',
+            '/static/js/quill.min.js',
         )
+        css = {'all': ('/static/css/quill.snow.css',)}

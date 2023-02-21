@@ -26,7 +26,7 @@ class ContactUs(models.Model):
     CONTACT_TYPE = (
         ("contact", "Contact"),
         ("report_user", "Report User"),
-        ("report_topic", "Report Topic"),
+        ("report_page", "Report Page"),
         ("report_comment", "Report Comment"),
         ("report_reply", "Report Reply"),
         ("report_error", "Report Error"),
@@ -45,7 +45,7 @@ class ContactUs(models.Model):
                              blank=True)
     email = models.EmailField(max_length=100)
     phone = PhoneNumberField(blank=True)
-    desc = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, help_text='{"for":"","url": "","desc":""}')
     time = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -102,6 +102,7 @@ class SitePage(models.Model):
         ("exam", "Exam"),
         ("blog", "Blog"),
         ("material", "Material"),
+        ("other", "Other"),
     )
 
     isa = models.CharField(
@@ -170,6 +171,9 @@ class SitePage(models.Model):
     @property
     def is_edited(self) -> bool:
         return self.time != self.updated_at
+
+    def __str__(self):
+        return self.shortTitle
 
     class Meta:
         verbose_name_plural = "Site Pages"

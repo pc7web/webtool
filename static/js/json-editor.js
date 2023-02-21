@@ -112,4 +112,27 @@ function format_data() {
         500);
 }
 
+function createEditor() {
+    // //cdn.quilljs.com/1.3.6/quill.snow.css
+    var textarea = document.getElementById("id_data")
+    const editor = document.createElement("div")
+    editor.id = "json-editor"
+    // editor.innerHTML = "sfsdfsdf"
+    textarea.parentElement.appendChild(editor)
+    var quill = new Quill('#json-editor', {
+        // modules: {
+        //     toolbar: '#toolbar'
+        // },
+        theme: 'snow'
+    });
+    // textarea.parentElement.insertBefore(editor, textarea)
+    // console.log(
+    //     );
+}
+
 contentMainButtons.push({ text: "Format json", do: format_data, at: /add|change/g })
+contentMainButtons.push({ text: "Editor", do: createEditor, at: /add|change/g })
+
+// setTimeout(() => {
+//     createEditor()
+// }, 500);

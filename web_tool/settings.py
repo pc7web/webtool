@@ -26,7 +26,7 @@ load_dotenv(env_path)
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 WEB_URL = os.getenv("WEB_URL")
 WEB_NAME = os.getenv("WEB_NAME")
 
@@ -104,7 +104,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300
     }
 }
-DATABASES["default"] = DATABASES[os.environ('DB_DEFAULT', 'default')]
+DATABASES["default"] = DATABASES[os.getenv('DB_DEFAULT', 'default')]
 
 
 # Password validation
