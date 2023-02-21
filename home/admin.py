@@ -1,4 +1,3 @@
-from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from home.filters import ActiveUser
 
@@ -8,7 +7,7 @@ from home.models import ContactUs, SiteData, SitePage, Tag
 
 
 @admin.register(SiteData)
-class SiteDataAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class SiteDataAdmin(admin.ModelAdmin):
     search_fields = ['name']
     readonly_fields = ['id', 'time', 'updated_at']
 
@@ -29,7 +28,7 @@ class SiteDataAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(ContactUs)
-class ContactUsAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class ContactUsAdmin(admin.ModelAdmin):
     search_fields = ['title', 'time']
     readonly_fields = ['id', 'time', 'updated_at']
 
@@ -57,7 +56,7 @@ class ContactUsAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(Tag)
-class TagAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class TagAdmin(admin.ModelAdmin):
     search_fields = ['name', 'id', 'time']
 
     readonly_fields = ['id', 'time']
@@ -70,7 +69,7 @@ class TagAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(SitePage)
-class SitePageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class SitePageAdmin(admin.ModelAdmin):
     search_fields = ['name', 'user', 'id']
     readonly_fields = ['id', 'time', 'updated_at']
     autocomplete_fields = ['tags', "user"]
@@ -95,6 +94,6 @@ class SitePageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
             '/static/js/addModelButtons.js',
             '/static/js/persistInputs.js',
             '/static/js/html-editor.js',
-            '/static/js/quill.min.js',
+            'https://cdn.quilljs.com/1.3.6/quill.min.js',
         )
-        css = {'all': ('/static/css/quill.snow.css',)}
+        css = {'all': ('https://cdn.quilljs.com/1.3.6/quill.snow.css',)}
