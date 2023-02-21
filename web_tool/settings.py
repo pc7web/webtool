@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'gdstorage',
+    # 'gdstorage',
 
     "home",
     # "rest_framework",
