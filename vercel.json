@@ -10,10 +10,11 @@
             }
         },
         {
-            "src": "build_files.sh",
+            "src": "web_tool/settings.py",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "staticfiles"
+                "distDir": "staticfiles",
+                "buildCommand": "python3.9 -m pip install -r requirements.txt && python3.9 manage.py collectstatic  --noinput --clear"
             }
         }
     ],
