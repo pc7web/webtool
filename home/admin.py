@@ -1,8 +1,10 @@
+import os
 from django.contrib import admin
 from home.filters import ActiveUser
 
 from home.models import ContactUs, SiteData, SitePage, Tag
 
+WEB_NAME = os.environ.get("WEB_NAME")
 # Register your models here.
 
 
@@ -78,16 +80,16 @@ class SitePageAdmin(admin.ModelAdmin):
         model = SitePage
 
     list_display = ['shortTitle', 'user',
-                    'is_approved', 'slug', 'created', 'updated']
+                    'is_indexed', 'slug', 'created', 'updated']
 
     list_filter = (
-        "isa",
+        "page_type",
         "is_published",
-        "is_approved",
+        "is_indexed",
         ActiveUser,
     )
 
-    ordering = ['isa', 'is_approved', 'is_published', '-updated_at']
+    ordering = ['page_type', 'is_indexed', 'is_published', '-updated_at']
 
     class Media:
         js = (
@@ -97,3 +99,8 @@ class SitePageAdmin(admin.ModelAdmin):
             'https://cdn.quilljs.com/1.3.6/quill.min.js',
         )
         css = {'all': ('https://cdn.quilljs.com/1.3.6/quill.snow.css',)}
+
+
+admin.site.site_header = WEB_NAME
+admin.site.site_title = WEB_NAME
+admin.site.index_title = WEB_NAME + " Site Administration"

@@ -15,8 +15,9 @@ class SiteData(models.Model):
     name = models.CharField(max_length=150, unique=True)
     category = models.CharField(max_length=50)
     data = models.JSONField(default=dict)
-    time = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Time (Updated)")
 
     class Meta:
         verbose_name_plural = "Site Data"
@@ -45,9 +46,11 @@ class ContactUs(models.Model):
                              blank=True)
     email = models.EmailField(max_length=100)
     phone = PhoneNumberField(blank=True)
-    data = models.JSONField(default=dict, help_text='{"for":"","url": "","desc":""}')
-    time = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    data = models.JSONField(
+        default=dict, help_text='{"for":"","url": "","desc":""}')
+    time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Time (Updated)")
 
     def __str__(self) -> str:
         return f"{self.title} | {self.email}"
@@ -59,7 +62,7 @@ class ContactUs(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=50, blank=False, unique=True)
     active = models.BooleanField(default=True)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
 
     def __str__(self) -> str:
         return self.name
@@ -102,10 +105,11 @@ class SitePage(models.Model):
         ("exam", "Exam"),
         ("blog", "Blog"),
         ("material", "Material"),
+        ("route", "Route"),
         ("other", "Other"),
     )
 
-    isa = models.CharField(
+    page_type = models.CharField(
         max_length=20,
         verbose_name="Type",
         default="page",
@@ -121,23 +125,28 @@ class SitePage(models.Model):
         help_text="'auto' will be replaced by slug generated using title field",
     )
 
-    content = models.TextField()
-    is_markup = models.BooleanField(default=False)
+    content = models.TextField(verbose_name="Page Content",
+                               help_text="Click on the top EDITOR button to open HTML Editor.")
+    is_markup = models.BooleanField(
+        default=False, verbose_name="Is a Markdown", help_text="like: # heading")
 
-    is_approved = models.BooleanField(default=False)
-    is_published = models.BooleanField(default=False)
+    is_indexed = models.BooleanField(
+        default=False, verbose_name="Index", help_text="List with all pages.")
+    is_published = models.BooleanField(
+        default=False, verbose_name="Publish", help_text="saved as draft if unchecked.")
 
-    time = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Time (Updated)")
 
     description = models.CharField(
-        max_length=250, help_text="Meta description")
+        max_length=250, help_text="Meta description(SEO)")
     categories = models.CharField(max_length=50)
     tags = models.ManyToManyField(
-        Tag, help_text="Meta keywords", verbose_name="Keywords")
+        Tag, help_text="Meta keywords(SEO)", verbose_name="Keywords")
 
     class Meta:
-        ordering = ["isa", "is_approved",
+        ordering = ["page_type", "is_indexed",
                     "is_published", "-time", "-updated_at"]
 
     @classmethod

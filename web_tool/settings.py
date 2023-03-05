@@ -23,18 +23,18 @@ load_dotenv(env_path)
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
-WEB_URL = os.getenv("WEB_URL")
-WEB_NAME = os.getenv("WEB_NAME")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+WEB_URL = os.environ.get("WEB_URL")
+WEB_NAME = os.environ.get("WEB_NAME")
 
-ALLOWED_HOSTS = ['*'] if DEBUG else os.getenv("ALLOWED_HOSTS").split(", ")
+ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get("ALLOWED_HOSTS").split(", ")
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN").split(", ")
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(", ")
+CORS_ORIGIN_WHITELIST = os.environ.get("CORS_ORIGIN").split(", ")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(", ")
 
 # Application definition
 
@@ -91,11 +91,11 @@ WSGI_APPLICATION = 'web_tool.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASS"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USER"),
+        'PASSWORD': os.environ.get("DB_PASS"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PORT': os.environ.get("DB_PORT"),
         "CONN_MAX_AGE": 300
     },
     "dev": {
@@ -104,7 +104,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300
     }
 }
-DATABASES["default"] = DATABASES[os.getenv('DB_DEFAULT', 'default')]
+DATABASES["default"] = DATABASES[os.environ.get('DB_DEFAULT', 'default')]
 
 
 # Password validation
