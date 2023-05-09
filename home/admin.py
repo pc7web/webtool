@@ -1,10 +1,9 @@
 import os
 from django.contrib import admin
-from home.filters import ActiveUser
+from home.filters import ActiveTag, ActiveUser, ProfileType
 
-from home.models import ContactUs, SiteData, SitePage, Tag
+from home.models import ContactUs, SiteData, SitePage, Profile
 
-WEB_NAME = os.environ.get("WEB_NAME")
 # Register your models here.
 
 
@@ -12,6 +11,7 @@ WEB_NAME = os.environ.get("WEB_NAME")
 class SiteDataAdmin(admin.ModelAdmin):
     search_fields = ['name']
     readonly_fields = ['id', 'time', 'updated_at']
+    list_per_page = 20
 
     list_display = (
         "name",
@@ -33,6 +33,7 @@ class SiteDataAdmin(admin.ModelAdmin):
 class ContactUsAdmin(admin.ModelAdmin):
     search_fields = ['title', 'time']
     readonly_fields = ['id', 'time', 'updated_at']
+    list_per_page = 20
 
     list_filter = (
         ActiveUser,
@@ -57,36 +58,38 @@ class ContactUsAdmin(admin.ModelAdmin):
         )
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'id', 'time']
+# @admin.register(Tag)
+# class TagAdmin(admin.ModelAdmin):
+#     search_fields = ['name', 'id', 'time']
 
-    readonly_fields = ['id', 'time']
+#     readonly_fields = ['id', 'time']
 
-    list_display = (
-        "name",
-        "id",
-        "time",
-    )
+#     list_display = (
+#         "name",
+#         "id",
+#         "time",
+#     )
 
 
 @admin.register(SitePage)
 class SitePageAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'user', 'id']
+    search_fields = ['name', 'user', 'categories', 'tags', 'id']
     readonly_fields = ['id', 'time', 'updated_at']
-    autocomplete_fields = ['tags', "user"]
+    autocomplete_fields = ["user"]
+    list_per_page = 20
 
     class Meta:
         model = SitePage
 
-    list_display = ['shortTitle', 'user',
-                    'is_indexed', 'slug', 'created', 'updated']
+    list_display = ['shortTitle', 'user', 'is_published',
+                    'is_indexed', 'slug', 'created']
 
     list_filter = (
         "page_type",
         "is_published",
         "is_indexed",
         ActiveUser,
+        ActiveTag,
     )
 
     ordering = ['page_type', 'is_indexed', 'is_published', '-updated_at']
@@ -96,10 +99,39 @@ class SitePageAdmin(admin.ModelAdmin):
             '/static/js/addModelButtons.js',
             '/static/js/persistInputs.js',
             '/static/js/html-editor.js',
-            'https://cdn.quilljs.com/1.3.6/quill.min.js',
+            '/static/js/quill.min.js',
         )
-        css = {'all': ('https://cdn.quilljs.com/1.3.6/quill.snow.css',)}
+        css = {'all': ('/static/css/quill.snow.css',)}
 
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_filter = (
+        ProfileType,
+        ActiveUser,
+    )
+    search_fields = ['user__username', 'uuid']
+    readonly_fields = ['id', 'uuid']
+    autocomplete_fields = ['user']
+    radio_fields = {'isa': admin.HORIZONTAL}
+    list_per_page = 20
+
+    list_display = (
+        "user",
+        "id",
+        "isa",
+        "uuid",
+        "joined_at",
+    )
+
+    class Media:
+        js = (
+            '/static/js/addModelButtons.js',
+            '/static/js/json-editor.js',
+        )
+
+
+WEB_NAME = os.environ.get("WEB_NAME")
 
 admin.site.site_header = WEB_NAME
 admin.site.site_title = WEB_NAME

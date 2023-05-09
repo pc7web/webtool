@@ -1,4 +1,5 @@
 var contentMainButtons = []
+var initFuncs = []
 // contentMainButtons.push({ text: "Format json", do: format_data, at: '/change' | '/[model_name]' })
 
 function addBtns() {
@@ -22,5 +23,12 @@ function addBtns() {
         contentMain.appendChild(li);
     })
 }
+initFuncs.push(addBtns)
 
-window.addEventListener("load", addBtns)
+function windowInit() {
+    initFuncs.forEach(func => {
+        func()
+    })
+}
+
+window.addEventListener("load", windowInit)

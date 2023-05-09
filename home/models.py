@@ -2,7 +2,7 @@ import re
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 # from gdstorage.storage import GoogleDriveStorage
 from phonenumber_field.modelfields import PhoneNumberField
@@ -12,7 +12,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class SiteData(models.Model):
-    name = models.CharField(max_length=150, unique=True)
+    name = models.CharField(max_length=150)
+    is_active = models.BooleanField(default=True)
     category = models.CharField(max_length=50)
     data = models.JSONField(default=dict)
     time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
@@ -21,6 +22,7 @@ class SiteData(models.Model):
 
     class Meta:
         verbose_name_plural = "Site Data"
+        unique_together = ('name', 'category')
 
 
 class ContactUs(models.Model):
@@ -40,7 +42,7 @@ class ContactUs(models.Model):
         max_length=20,
         verbose_name="Contact Type",
     )
-    user = models.ForeignKey(User,
+    user = models.ForeignKey(User, to_field="username",
                              on_delete=models.PROTECT,
                              null=True,
                              blank=True)
@@ -101,6 +103,9 @@ class Tag(models.Model):
 class SitePage(models.Model):
     PAGE_TYPE = (
         ("page", "Page"),
+        ("job", "Job"),
+        ("internship", "Internship"),
+        ("freelancing", "Freelancing"),
         ("tool", "Tool"),
         ("exam", "Exam"),
         ("blog", "Blog"),
@@ -116,7 +121,7 @@ class SitePage(models.Model):
         choices=PAGE_TYPE
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="pages", verbose_name="Author")
+        User, on_delete=models.CASCADE, to_field="username", related_name="pages", verbose_name="Author")
     title = models.CharField(max_length=150)
     slug = models.CharField(
         max_length=150,
@@ -142,8 +147,8 @@ class SitePage(models.Model):
     description = models.CharField(
         max_length=250, help_text="Meta description(SEO)")
     categories = models.CharField(max_length=50)
-    tags = models.ManyToManyField(
-        Tag, help_text="Meta keywords(SEO)", verbose_name="Keywords")
+    tags = models.CharField(
+        max_length=150, help_text="Meta keywords(SEO), (, saparated)", verbose_name="Keywords", blank=True)
 
     class Meta:
         ordering = ["page_type", "is_indexed",
@@ -187,9 +192,118 @@ class SitePage(models.Model):
     class Meta:
         verbose_name_plural = "Site Pages"
 
+
+class Profile(models.Model):
+    USER_TYPE = (
+        ("user", "user"),
+        ("staff", "staff"),
+        ("admin", "admin"),
+    )
+
+    uuid = models.UUIDField(
+        help_text="Don't modify! (Foreign key for supabase's auth.users [id: UUID])")
+    user = models.OneToOneField(User, null=True, to_field="username",
+                                on_delete=models.RESTRICT)
+    isa = models.CharField(choices=USER_TYPE, default="user", max_length=20,
+                           help_text="Represent user type in frontend(sync with the supabase's auth.users's user_meta_data's[: Jsonb] isa property).")
+    data = models.JSONField(
+        default=dict, help_text="{data} property will be sync with the supabase's auth.users's user_meta_data's[: Jsonb] data property.")
+    joined_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.user} * {self.email}"
+
+    @property
+    def full_name(self) -> str:
+        return self.user.get_full_name()
+
+    @property
+    def public(self) -> dict[any]:
+        try:
+            default = SiteData.objects.filter(name='profile-init-data').first()
+            if self.data.get("isprivate", True):
+                return default.data.get("public", {})
+            return self.data.get("public", default.data.get("public", {}))
+        except:
+            return {}
+
+    @property
+    def privateData(self) -> dict[any]:
+        try:
+            return self.data.get("private", {})
+        except:
+            return {}
+
+    @property
+    def getState(self) -> dict[any]:
+        try:
+            return self.data.state
+        except:
+            self.data.set('state', {})
+            return {}
+
+    @property
+    def is_email_verified(self) -> bool:
+        return self.data.get("state", {}).get("email_verified", True)
+
+    @property
+    def username(self) -> str:
+        return self.user.username
+
+    @property
+    def email(self) -> str:
+        return self.user.email
+
+    def setIsa(self, isa=None) -> str:
+        if isa == None:
+            isa = self.user
+        self.isa = Profile.getIsa(isa)
+        return self.isa
+
+    @classmethod
+    def getUserTypes(cls) -> set[str]:
+        return {"admin", "staff", "user"}
+
+    @classmethod
+    def getIsa(cls, user) -> str:
+        types = cls.getUserTypes()
+
+        if type(user) == str and user in types:
+            return user
+
+        elif type(user) == User:
+            if user.groups.first():
+                name = user.groups.first().name
+                if name in types:
+                    return name
+
+            if user.is_superuser:
+                return "admin"
+            elif user.is_staff:
+                return "staff"
+
+        return "user"
+
+    # Create object with initial data for profile's data
+    @classmethod
+    def create(cls, **kwargs):
+        siteData = SiteData.objects.filter(name="profile-init-data").first()
+        data = siteData.data if siteData != None else {}
+        return cls.objects.create(data=data, **kwargs)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.create(user=instance, isa=Profile.getIsa(instance))
+        if instance.is_superuser or instance.is_staff:
+            pass
+    else:
+        instance.profile.setIsa(instance)
+        instance.profile.save()
+
+
 # signal for create slug field while new creating Topic's object/row
-
-
 @receiver(pre_save, sender=SitePage)
 def create_sitepage_slug(sender, instance, **kwargs):
     if instance.slug == "auto" or instance.slug == '':

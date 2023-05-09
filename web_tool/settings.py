@@ -146,6 +146,12 @@ PHONENUMBER_DEFAULT_REGION = "IN"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
@@ -155,10 +161,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_HOST = '' if DEBUG else os.environ.get("STATIC_HOST")
+STATIC_URL = STATIC_HOST + '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
+WHITENOISE_ROOT = ''
 # Google Drive Storage Settings
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = "gdstorage-key.json"
 GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = WEB_NAME.lower().replace(' ', '-')

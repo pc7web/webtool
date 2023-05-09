@@ -2,6 +2,7 @@ var quill;
 
 function createEditor() {
     if (quill) return;
+    
     var textarea = document.getElementById("id_content")
     const editor = document.createElement("div")
 
@@ -29,7 +30,10 @@ function createEditor() {
 
                 // ['clean'],
                 ['link'/* , 'image' */]
-            ]
+            ]/* ,
+            image: {
+                
+            } */
         }, theme: 'snow'
     });
 
@@ -42,4 +46,5 @@ function createEditor() {
     }, 2000);
 }
 
-contentMainButtons.push({ text: "Editor", do: createEditor, at: /add|change/g })
+// contentMainButtons.push({ text: "Editor", do: createEditor, at: /add|change/g })
+initFuncs.push(createEditor)
