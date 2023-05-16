@@ -130,6 +130,8 @@ class SitePage(models.Model):
         help_text="'auto' will be replaced by slug generated using title field",
     )
 
+    data = models.JSONField(verbose_name="Addition Data",
+                            default=dict, help_text='like: {"company": "", "role": "", "salary": "", "experience": "", "location": "", "website": "", "applyLink": "", "lastDate": ""}')
     content = models.TextField(verbose_name="Page Content",
                                help_text="Click on the top EDITOR button to open HTML Editor.")
     is_markup = models.BooleanField(
@@ -290,6 +292,21 @@ class Profile(models.Model):
         siteData = SiteData.objects.filter(name="profile-init-data").first()
         data = siteData.data if siteData != None else {}
         return cls.objects.create(data=data, **kwargs)
+
+
+class FileUpload(models.Model):
+    title = models.CharField(max_length=250)
+    time = models.TimeField(auto_now_add=True)
+    data = models.JSONField(verbose_name='File Data', default=dict)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "File Uploads"
+        ordering = (
+            "title",
+            "-time",
+            "-active",
+        )
 
 
 @receiver(post_save, sender=User)

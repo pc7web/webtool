@@ -2,7 +2,7 @@ import os
 from django.contrib import admin
 from home.filters import ActiveTag, ActiveUser, ProfileType
 
-from home.models import ContactUs, SiteData, SitePage, Profile
+from home.models import ContactUs, FileUpload, SiteData, SitePage, Profile
 
 # Register your models here.
 
@@ -100,6 +100,7 @@ class SitePageAdmin(admin.ModelAdmin):
             '/static/js/persistInputs.js',
             '/static/js/html-editor.js',
             '/static/js/quill.min.js',
+            '/static/js/json-editor.js',
         )
         css = {'all': ('/static/css/quill.snow.css',)}
 
@@ -129,6 +130,23 @@ class ProfileAdmin(admin.ModelAdmin):
             '/static/js/addModelButtons.js',
             '/static/js/json-editor.js',
         )
+
+
+@admin.register(FileUpload)
+class FileUploadAdmin(admin.ModelAdmin):
+    list_filter = (
+        "active",
+    )
+    search_fields = ['title', 'id']
+    readonly_fields = ['id']
+    list_per_page = 20
+
+    list_display = (
+        "title",
+        "id",
+        "active",
+        "time",
+    )
 
 
 WEB_NAME = os.environ.get("WEB_NAME")
