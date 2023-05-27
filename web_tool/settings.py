@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
     "home",
     # "rest_framework",
-    # "import_export",
+    "import_export",
 ]
 
 MIDDLEWARE = [

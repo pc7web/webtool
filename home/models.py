@@ -47,7 +47,7 @@ class ContactUs(models.Model):
                              null=True,
                              blank=True)
     email = models.EmailField(max_length=100)
-    phone = PhoneNumberField(blank=True)
+    phone = PhoneNumberField(blank=True, null=True)
     data = models.JSONField(
         default=dict, help_text='{"for":"","url": "","desc":""}')
     time = models.DateTimeField(auto_now_add=True, verbose_name="Time (Added)")
@@ -203,7 +203,7 @@ class Profile(models.Model):
     )
 
     uuid = models.UUIDField(
-        help_text="Don't modify! (Foreign key for supabase's auth.users [id: UUID])")
+        help_text="Don't modify! (Foreign key for supabase's auth.users [id: UUID])", null=True)
     user = models.OneToOneField(User, null=True, to_field="username",
                                 on_delete=models.RESTRICT)
     isa = models.CharField(choices=USER_TYPE, default="user", max_length=20,
@@ -298,7 +298,7 @@ class FileUpload(models.Model):
     title = models.CharField(max_length=250)
     time = models.TimeField(auto_now_add=True)
     data = models.JSONField(verbose_name='File Data', default=dict)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "File Uploads"

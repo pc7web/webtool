@@ -1,5 +1,6 @@
 import os
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 from home.filters import ActiveTag, ActiveUser, ProfileType
 
 from home.models import ContactUs, FileUpload, SiteData, SitePage, Profile
@@ -8,7 +9,7 @@ from home.models import ContactUs, FileUpload, SiteData, SitePage, Profile
 
 
 @admin.register(SiteData)
-class SiteDataAdmin(admin.ModelAdmin):
+class SiteDataAdmin(ImportExportModelAdmin):
     search_fields = ['name']
     readonly_fields = ['id', 'time', 'updated_at']
     list_per_page = 20
@@ -30,7 +31,7 @@ class SiteDataAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactUs)
-class ContactUsAdmin(admin.ModelAdmin):
+class ContactUsAdmin(ImportExportModelAdmin):
     search_fields = ['title', 'time']
     readonly_fields = ['id', 'time', 'updated_at']
     list_per_page = 20
@@ -59,7 +60,7 @@ class ContactUsAdmin(admin.ModelAdmin):
 
 
 # @admin.register(Tag)
-# class TagAdmin(admin.ModelAdmin):
+# class TagAdmin(ImportExportModelAdmin):
 #     search_fields = ['name', 'id', 'time']
 
 #     readonly_fields = ['id', 'time']
@@ -72,7 +73,7 @@ class ContactUsAdmin(admin.ModelAdmin):
 
 
 @admin.register(SitePage)
-class SitePageAdmin(admin.ModelAdmin):
+class SitePageAdmin(ImportExportModelAdmin):
     search_fields = ['name', 'user', 'categories', 'tags', 'id']
     readonly_fields = ['id', 'time', 'updated_at']
     autocomplete_fields = ["user"]
@@ -106,7 +107,7 @@ class SitePageAdmin(admin.ModelAdmin):
 
 
 @admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(ImportExportModelAdmin):
     list_filter = (
         ProfileType,
         ActiveUser,
@@ -133,7 +134,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 @admin.register(FileUpload)
-class FileUploadAdmin(admin.ModelAdmin):
+class FileUploadAdmin(ImportExportModelAdmin):
     list_filter = (
         "active",
     )

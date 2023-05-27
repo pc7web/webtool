@@ -10,3 +10,4 @@ djangorestframework-simplejwt
 django-cors-headers==3.7.0
 whitenoise==6.2.0
 gunicorn==20.1.0
+django-import-export==3.0.2
