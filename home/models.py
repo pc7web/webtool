@@ -104,11 +104,9 @@ class SitePage(models.Model):
     PAGE_TYPE = (
         ("page", "Page"),
         ("job", "Job"),
-        ("internship", "Internship"),
-        ("freelancing", "Freelancing"),
         ("tool", "Tool"),
         ("exam", "Exam"),
-        ("blog", "Blog"),
+        ("article", "Article"),
         ("material", "Material"),
         ("route", "Route"),
         ("other", "Other"),
